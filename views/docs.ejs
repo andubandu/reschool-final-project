@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - <%= apiInfo.title %></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar h3 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar ul li a {
+            color: #64748b;
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #f1f5f9;
+            color: #667eea;
+        }
+
+        .sidebar .group-links {
+            margin-left: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar .group-links li {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar .group-links a {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h2 {
+            color: #1e293b;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .section h3 {
+            color: #334155;
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .server-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .server-item {
+            background: #f0f9ff;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0f2fe;
+        }
+
+        .server-url {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #0369a1;
+            font-weight: 600;
+        }
+
+        .schema-container {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .schema-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .property-table th {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .property-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .property-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .property-name {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .property-type {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #059669;
+            background: #f0fdf4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .property-example {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #6366f1;
+            background: #f5f3ff;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .endpoint-group {
+            margin: 2rem 0;
+        }
+
+        .endpoint-group h3 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .endpoint {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            padding: 1rem 1.5rem;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .method-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method-get { background: #dcfce7; color: #166534; }
+        .method-post { background: #fef3c7; color: #92400e; }
+        .method-put { background: #dbeafe; color: #1e40af; }
+        .method-patch { background: #f3e8ff; color: #7c3aed; }
+        .method-delete { background: #fee2e2; color: #dc2626; }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1.1rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .auth-badge {
+            background: #fecaca;
+            color: #b91c1c;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .auth-badge.optional {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .endpoint-body {
+            padding: 1.5rem;
+        }
+
+        .endpoint-description {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .params-section, .response-section {
+            margin: 1.5rem 0;
+        }
+
+        .params-section h5, .response-section h5 {
+            color: #374151;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .param-item {
+            background: #f8fafc;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .param-name {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .param-required {
+            color: #dc2626;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .param-default {
+            color: #059669;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .param-enum {
+            color: #7c3aed;
+            font-size: 0.75rem;
+            font-style: italic;
+            margin-left: 0.5rem;
+        }
+
+        .response-item {
+            background: #f9fafb;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .response-status {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-200 { background: #dcfce7; color: #166534; }
+        .status-201 { background: #dcfce7; color: #166534; }
+        .status-302 { background: #dbeafe; color: #1e40af; }
+        .status-400 { background: #fef3c7; color: #92400e; }
+        .status-401 { background: #fee2e2; color: #dc2626; }
+        .status-403 { background: #fee2e2; color: #dc2626; }
+        .status-404 { background: #fee2e2; color: #dc2626; }
+        .status-413 { background: #fee2e2; color: #dc2626; }
+
+        .request-body-section {
+            margin: 1.5rem 0;
+        }
+
+        .request-body-section h5 {
+            color: #374151;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .request-example {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+        }
+
+        .content-type-badge {
+            background: #f0f9ff;
+            color: #0369a1;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .sidebar {
+                position: static;
+                order: 2;
+            }
+
+            .content {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .auth-badge {
+                margin-left: 0;
+            }
+        }
+
+        .scroll-target {
+            scroll-margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1><%= apiInfo.title %></h1>
+            <p><%= apiInfo.description %></p>
+            <span class="version-badge">Version <%= apiInfo.version %></span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <nav class="sidebar">
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#servers">Servers</a></li>
+                    <li><a href="#schemas">Data Schemas</a></li>
+                    <li><a href="#endpoints">API Endpoints</a></li>
+                    <ul class="group-links">
+                        <% Object.keys(endpointGroups).forEach(groupName => { %>
+                            <li><a href="#<%= groupName.toLowerCase() %>"><%= groupName %></a></li>
+                        <% }) %>
+                    </ul>
+                </ul>
+            </nav>
+
+            <div class="content">
+                <section id="overview" class="section scroll-target">
+                    <h2>Overview</h2>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>API Information</h4>
+                            <p><strong>Title:</strong> <%= apiInfo.title %></p>
+                            <p><strong>Version:</strong> <%= apiInfo.version %></p>
+                            <p><strong>Description:</strong> <%= apiInfo.description %></p>
+                        </div>
+                        <!-- <div class="info-card">
+                            <h4>Contact Information</h4>
+                            <p><strong>Support:</strong> <%= apiInfo.contact.name %></p>
+                            <p><strong>Email:</strong> <%= apiInfo.contact.email %></p>
+                        </div> -->
+                    </div>
+                </section>
+
+                <section id="servers" class="section scroll-target">
+                    <h2>Available Servers</h2>
+                    <div class="server-list">
+                        <% apiInfo.servers.forEach(server => { %>
+                        <div class="server-item">
+                            <div class="server-url"><%= server.url %></div>
+                            <div><%= server.description %></div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </section>
+
+                <section id="schemas" class="section scroll-target">
+                    <h2>Data Schemas</h2>
+                    <p>The following schemas define the structure of data objects used throughout the API:</p>
+                    
+                    <% Object.keys(schemas).forEach(schemaName => { %>
+                        <div class="schema-container">
+                            <div class="schema-title"><%= schemaName %></div>
+                            <table class="property-table">
+                                <thead>
+                                    <tr>
+                                        <th>Property</th>
+                                        <th>Type</th>
+                                        <th>Example</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% Object.keys(schemas[schemaName].properties).forEach(propName => { %>
+                                        <% const prop = schemas[schemaName].properties[propName] %>
+                                        <tr>
+                                            <td class="property-name"><%= propName %></td>
+                                            <td>
+                                                <% if (prop.type) { %>
+                                                    <span class="property-type"><%= prop.type %></span>
+                                                    <% if (prop.enum) { %>
+                                                        <br><small>Enum: <%= prop.enum.join(', ') %></small>
+                                                    <% } %>
+                                                    <% if (prop.format) { %>
+                                                        <br><small>Format: <%= prop.format %></small>
+                                                    <% } %>
+                                                <% } else if (prop.ref) { %>
+                                                    <span class="property-type">Reference to <%= prop.ref %></span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (prop.example) { %>
+                                                    <span class="property-example"><%= JSON.stringify(prop.example) %></span>
+                                                <% } %>
+                                            </td>
+                                            <td><%= prop.description || '' %></td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% }) %>
+                </section>
+
+                <section id="endpoints" class="section scroll-target">
+                    <h2>API Endpoints</h2>
+                    <p>Complete reference for all available API endpoints organized by functionality:</p>
+
+                    <% Object.keys(endpointGroups).forEach(groupName => { %>
+                        <div class="endpoint-group" id="<%= groupName.toLowerCase() %>">
+                            <h3><%= groupName %></h3>
+                            
+                            <% endpointGroups[groupName].forEach(endpoint => { %>
+                                <div class="endpoint">
+                                    <div class="endpoint-header">
+                                        <span class="method-badge method-<%= endpoint.method.toLowerCase() %>">
+                                            <%= endpoint.method %>
+                                        </span>
+                                        <span class="endpoint-path"><%= endpoint.path %></span>
+                                        <span class="auth-badge <%= endpoint.auth ? '' : 'optional' %>">
+                                            <%= endpoint.auth ? 'Auth Required' : 'Public' %>
+                                        </span>
+                                    </div>
+                                    <div class="endpoint-body">
+                                        <div class="endpoint-description">
+                                            <%= endpoint.description %>
+                                        </div>
+
+                                        <% if (endpoint.parameters) { %>
+                                            <div class="params-section">
+                                                <h5>Path Parameters</h5>
+                                                <% endpoint.parameters.forEach(param => { %>
+                                                    <div class="param-item">
+                                                        <span class="param-name"><%= param.name %></span>
+                                                        <span class="property-type"><%= param.type %></span>
+                                                        <% if (param.required) { %>
+                                                            <span class="param-required">Required</span>
+                                                        <% } %>
+                                                        <div><%= param.description %></div>
+                                                    </div>
+                                                <% }) %>
+                                            </div>
+                                        <% } %>
+
+                                        <% if (endpoint.query) { %>
+                                            <div class="params-section">
+                                                <h5>Query Parameters</h5>
+                                                <% endpoint.query.forEach(param => { %>
+                                                    <div class="param-item">
+                                                        <span class="param-name"><%= param.name %></span>
+                                                        <span class="property-type"><%= param.type %></span>
+                                                        <% if (param.required) { %>
+                                                            <span class="param-required">Required</span>
+                                                        <% } %>
+                                                        <% if (param.default) { %>
+                                                            <span class="param-default">Default: <%= param.default %></span>
+                                                        <% } %>
+                                                        <% if (param.enum) { %>
+                                                            <span class="param-enum">Options: <%= param.enum.join(', ') %></span>
+                                                        <% } %>
+                                                        <div><%= param.description %></div>
+                                                    </div>
+                                                <% }) %>
+                                            </div>
+                                        <% } %>
+
+                                        <% if (endpoint.requestBody) { %>
+                                            <div class="request-body-section">
+                                                <h5>Request Body</h5>
+                                                <% if (endpoint.requestBody.contentType) { %>
+                                                    <span class="content-type-badge"><%= endpoint.requestBody.contentType %></span>
+                                                <% } else { %>
+                                                    <span class="content-type-badge">application/json</span>
+                                                <% } %>
+                                                
+                                                <% if (endpoint.requestBody.fields) { %>
+                                                    <% endpoint.requestBody.fields.forEach(field => { %>
+                                                        <div class="param-item">
+                                                            <span class="param-name"><%= field.name %></span>
+                                                            <span class="property-type"><%= field.type %></span>
+                                                            <div><%= field.description %></div>
+                                                        </div>
+                                                    <% }) %>
+                                                <% } else { %>
+                                                    <% if (endpoint.requestBody.schema) { %>
+                                                        <div class="param-item">
+                                                            <span class="property-type">Based on <%= endpoint.requestBody.schema %> schema</span>
+                                                            <% if (endpoint.requestBody.required) { %>
+                                                                <div><strong>Required fields:</strong> <%= endpoint.requestBody.required.join(', ') %></div>
+                                                            <% } %>
+                                                        </div>
+                                                    <% } %>
+                                                    
+                                                    <% if (endpoint.requestBody.example) { %>
+                                                        <div class="request-example">
+<%= JSON.stringify(endpoint.requestBody.example, null, 2) %>
+                                                        </div>
+                                                    <% } %>
+                                                <% } %>
+                                            </div>
+                                        <% } %>
+
+                                        <div class="response-section">
+                                            <h5>Responses</h5>
+                                            <% Object.keys(endpoint.responses).forEach(statusCode => { %>
+                                                <% const response = endpoint.responses[statusCode] %>
+                                                <div class="response-item">
+                                                    <span class="response-status status-<%= statusCode %>"><%= statusCode %></span>
+                                                    <div>
+                                                        <% if (response.schema) { %>
+                                                            <strong>Schema:</strong> <%= response.schema %>
+                                                        <% } %>
+                                                        <% if (response.data) { %>
+                                                            <br><strong>Data:</strong> <%= response.data %>
+                                                        <% } %>
+                                                        <% if (response.description) { %>
+                                                            <br><%= response.description %>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            <% }) %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% }) %>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.scroll-target');
+            const navLinks = document.querySelectorAll('.sidebar a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.background = '';
+                link.style.color = '#64748b';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.background = '#f1f5f9';
+                    link.style.color = '#667eea';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
